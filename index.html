@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Courier Costs</title>
+
+    <!-- <link rel="shortcut icon" href="favicon.ico" /> -->
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="bootflat/css/bootflat.min.css">
+
+    <link rel="stylesheet" type="text/css" href="couriercosts.css">
+
+  </head>
+
+  <body class="container">
+
+    <div id="couriercosts">
+
+      <h1>Courier Costs</h1>
+
+      <div class="form-group">
+        <label for="input-evepraisals">Input ISK amounts and Evepraisal links:</label>
+        <textarea id="input-evepraisals" class="form-control" placeholder="{{ 'Supports pasting multiple lines\nPress ENTER to submit' }}" autofocus v-model="newValue" @keyup.enter="addValue"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Demos:</label>
+        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12173210')">Min Subcaps</button>
+        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12173438')">Min Battleships</button>
+        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12173498')">Min/Gal Battleships</button>
+        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12173550')">Nestor/Machariel</button>
+        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/11993877')">Rolling Megathron</button>
+        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12000787')">Sisters Launcher</button>
+      </div>
+
+
+      <div v-if="evepraisals.length" class="col-lg-12">
+        <h2>Collateral</h2>
+        <span class="isk">{{ collateral | currency '' 2 }}</span>
+        <h2>Reward</h2>
+        <span class="isk">{{ reward | currency '' 2 }}</span>
+        <h2>Volume</h2>
+        {{ volume | currency '' 2 }}
+        <h2>Evepraisals</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Link</th>
+              <th>Hub</th>
+              <th>Type</th>
+              <th class="isk-header">Buy</th>
+              <th class="isk-header">Sell</th>
+              <th class="isk-header">Average</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="evepraisal in evepraisals">
+              <td><a target="_blank" href="http://evepraisal.com/e/{{ evepraisal.id }}">{{ evepraisal.id }}</a></td>
+              <td>{{ evepraisal.market_name }}</td>
+              <td>{{ evepraisal.kind }}</td>
+              <td class="isk">{{ evepraisal.totals.buy | currency '' 2 }}</td>
+              <td class="isk">{{ evepraisal.totals.sell | currency '' 2 }}</td>
+              <td class="isk">{{ (evepraisal.totals.buy + evepraisal.totals.sell) / 2 | currency '' 2 }}</td>
+              <td class="table-button"><button class="btn btn-danger btn-xs" @click="removeEvepraisal(evepraisal)">x</button></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Totals:</th>
+              <th></th>
+              <th></th>
+              <th class="isk">{{ totalEvepraisalsBuy | currency '' 2 }}</th>
+              <th class="isk">{{ totalEvepraisalsSell | currency '' 2 }}</th>
+              <th class="isk">{{ totalEvepraisalsAvg | currency '' 2 }}</th>
+              <th></th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+    </div>
+
+
+
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
+    <script type="text/javascript" src="bootstrap/js/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="config.js"></script>
+    <script type="text/javascript" src="couriercosts.js"></script>
+
+  </body>
+</html>
