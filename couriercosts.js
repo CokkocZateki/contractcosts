@@ -24,6 +24,10 @@
                 return JSON.stringify(this.ships);
             },
 
+            allItems: function() {
+                return this.ships.concat(this.nonShips);
+            },
+
             totalEvepraisalsBuy: function() {
                 var sum = 0;
                 for (var evepraisal of this.evepraisals) {
@@ -45,23 +49,25 @@
             },
 
             totalVolume: function() {
-                var allItems = this.ships.concat(this.nonShips);
-                return this.itemsVolume(allItems);
+                // var allItems = this.ships.concat(this.nonShips);
+                return this.itemsVolume(this.allItems);
             },
 
             totalCollateral: function() {
-                var collaterals = [];
-                for (var evepraisal of this.evepraisals) {
-                    collaterals.push(this.itemsCollateral(evepraisal.items));
-                }
-                var totalCollateral = collaterals.reduce((a, b) => a + b);
-                return totalCollateral;
+                // var collaterals = [];
+                // for (var evepraisal of this.evepraisals) {
+                //     collaterals.push(this.itemsCollateral(evepraisal.items));
+                // }
+                // var totalCollateral = collaterals.reduce((a, b) => a + b);
+                // return totalCollateral;
+                return this.itemsCollateral(this.allItems);
             },
 
             totalReward: function() {
-                var volumeComponent =  this.totalVolume * (this.config.reward.fullDstPrice / 60000);
-                var collateralComponent = this.totalCollateral * this.config.reward.percentOfCollateral;
-                return volumeComponent + collateralComponent;
+                // var volumeComponent =  this.totalVolume * (this.config.reward.fullDstPrice / 60000);
+                // var collateralComponent = this.totalCollateral * this.config.reward.percentOfCollateral;
+                // return volumeComponent + collateralComponent;
+                return this.itemsReward(this.allItems);
             },
 
         },
@@ -206,6 +212,21 @@
                 }
                 var totalVolume = volumes.reduce((a, b) => a + b);
                 return totalVolume || 0;
+            },
+
+            itemReward: function(item) {
+                var volumeComponent = this.itemVolume(item) * (this.config.reward.fullDstPrice / 60000);
+                var collateralComponent = this.itemCollateral(item) * this.config.reward.percentOfCollateral;
+                return volumeComponent + collateralComponent;
+            },
+
+            itemsReward: function(items) {
+                var rewards = [];
+                for (var item of items) {
+                    rewards.push(this.itemReward(item));
+                }
+                var totalReward = rewards.reduce((a, b) => a + b);
+                return totalReward || 0;
             },
         },
 

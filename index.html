@@ -34,12 +34,12 @@
 
 
       <div v-if="evepraisals.length" class="col-lg-12">
-        <h4>Collateral</h4>
+        <!-- <h4>Collateral</h4>
         <span class="isk">{{ totalCollateral | currency '' 2 }}</span>
         <h4>Reward</h4>
         <span class="isk">{{ totalReward | currency '' 2 }}</span>
         <h4>Volume</h4>
-        {{ totalVolume | currency '' 2 }}
+        {{ totalVolume | currency '' 2 }} -->
         <h4>Ships</h4>
         <table class="table">
           <thead>
@@ -54,10 +54,10 @@
             <tr>
               <td>{{ ship.name }}</td>
               <td>
-                <label for="packaged">Packaged</label>
+                <label for="packaged">Packed</label>
                 <input class="iradio" type="radio" id="packaged" value="packaged" v-model="ships[$index].condition" checked>
                 <input class="iradio" type="radio" id="unpackaged" value="unpackaged" v-model="ships[$index].condition">
-                <label for="unpackaged">Unpackaged</label>
+                <label for="unpackaged">Unpacked</label>
               </td>
               <td class="isk">{{ itemVolume(ship) | currency '' 2 }} m<sup>3</sup></td>
               <td>{{ ship.evepraisalID }}</td>
@@ -71,11 +71,12 @@
               <th>Link</th>
               <th>Hub</th>
               <th>Type</th>
-              <th class="isk-header">Collateral (Jita Sell)</th>
               <th class="isk-header">Volume</th>
-              <th class="isk-header">Buy</th>
+              <th class="isk-header">Collateral (Jita Sell)</th>
+              <th class="isk-header">Reward</th>
+              <!-- <th class="isk-header">Buy</th>
               <th class="isk-header">Sell</th>
-              <th class="isk-header">Average</th>
+              <th class="isk-header">Average</th> -->
               <th></th>
             </tr>
           </thead>
@@ -84,11 +85,12 @@
               <td><a target="_blank" href="http://evepraisal.com/e/{{ evepraisal.id }}">{{ evepraisal.id }}</a></td>
               <td>{{ evepraisal.market_name }}</td>
               <td>{{ evepraisal.kind }}</td>
-              <td class="isk">{{ itemsCollateral(evepraisal.items) | currency '' 2 }}</td>
               <td class="isk">{{ itemsVolume(evepraisal.items) | currency '' 2 }}</td>
-              <td class="isk">{{ evepraisal.totals.buy | currency '' 2 }}</td>
+              <td class="isk">{{ itemsCollateral(evepraisal.items) | currency '' 2 }}</td>
+              <td class="isk">{{ itemsReward(evepraisal.items) | currency '' 2 }}</td>
+              <!-- <td class="isk">{{ evepraisal.totals.buy | currency '' 2 }}</td>
               <td class="isk">{{ evepraisal.totals.sell | currency '' 2 }}</td>
-              <td class="isk">{{ (evepraisal.totals.buy + evepraisal.totals.sell) / 2 | currency '' 2 }}</td>
+              <td class="isk">{{ (evepraisal.totals.buy + evepraisal.totals.sell) / 2 | currency '' 2 }}</td> -->
               <td class="table-button"><button class="btn btn-danger btn-xs" @click="removeEvepraisal(evepraisal)">x</button></td>
             </tr>
           </tbody>
@@ -97,11 +99,12 @@
               <th>Totals:</th>
               <th></th>
               <th></th>
-              <th class="isk">{{ totalCollateral | currency '' 2 }}</th>
               <th class="isk">{{ totalVolume | currency '' 2 }}</th>
-              <th class="isk">{{ totalEvepraisalsBuy | currency '' 2 }}</th>
+              <th class="isk">{{ totalCollateral | currency '' 2 }}</th>
+              <th class="isk">{{ totalReward | currency '' 2 }}</th>
+              <!-- <th class="isk">{{ totalEvepraisalsBuy | currency '' 2 }}</th>
               <th class="isk">{{ totalEvepraisalsSell | currency '' 2 }}</th>
-              <th class="isk">{{ totalEvepraisalsAvg | currency '' 2 }}</th>
+              <th class="isk">{{ totalEvepraisalsAvg | currency '' 2 }}</th> -->
               <th></th>
             </tr>
           </tfoot>
