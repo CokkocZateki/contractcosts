@@ -71,6 +71,8 @@
               <th>Link</th>
               <th>Hub</th>
               <th>Type</th>
+              <th class="isk-header">Collateral (Jita Sell)</th>
+              <th class="isk-header">Volume</th>
               <th class="isk-header">Buy</th>
               <th class="isk-header">Sell</th>
               <th class="isk-header">Average</th>
@@ -82,6 +84,8 @@
               <td><a target="_blank" href="http://evepraisal.com/e/{{ evepraisal.id }}">{{ evepraisal.id }}</a></td>
               <td>{{ evepraisal.market_name }}</td>
               <td>{{ evepraisal.kind }}</td>
+              <td class="isk">{{ itemsCollateral(evepraisal.items) | currency '' 2 }}</td>
+              <td class="isk">{{ itemsVolume(evepraisal.items) | currency '' 2 }}</td>
               <td class="isk">{{ evepraisal.totals.buy | currency '' 2 }}</td>
               <td class="isk">{{ evepraisal.totals.sell | currency '' 2 }}</td>
               <td class="isk">{{ (evepraisal.totals.buy + evepraisal.totals.sell) / 2 | currency '' 2 }}</td>
@@ -93,6 +97,8 @@
               <th>Totals:</th>
               <th></th>
               <th></th>
+              <th class="isk">{{ totalCollateral | currency '' 2 }}</th>
+              <th class="isk">{{ totalVolume | currency '' 2 }}</th>
               <th class="isk">{{ totalEvepraisalsBuy | currency '' 2 }}</th>
               <th class="isk">{{ totalEvepraisalsSell | currency '' 2 }}</th>
               <th class="isk">{{ totalEvepraisalsAvg | currency '' 2 }}</th>

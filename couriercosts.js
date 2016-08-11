@@ -45,15 +45,8 @@
             },
 
             totalVolume: function() {
-                var volumes = [];
-                for (var ship of this.ships) {
-                    volumes.push(this.itemVolume(ship));
-                }
-                for (var nonShip of this.nonShips) {
-                    volumes.push(this.itemVolume(nonShip));
-                }
-                var volume = volumes.reduce((a, b) => a + b);
-                return volume;
+                var allItems = this.ships.concat(this.nonShips);
+                return this.itemsVolume(allItems);
             },
 
             totalCollateral: function() {
@@ -189,7 +182,7 @@
                 for (var item of items) {
                     collaterals.push(this.itemCollateral(item));
                 }
-                var totalCollateral = collaterals.reduce((a, b) => a + b, 0);
+                var totalCollateral = collaterals.reduce((a, b) => a + b);
                 return totalCollateral;
             },
 
@@ -204,6 +197,15 @@
                     console.log('bad item.condition found');
                     return 0;
                 }
+            },
+
+            itemsVolume: function(items) {
+                var volumes = [];
+                for (var item of items) {
+                    volumes.push(this.itemVolume(item));
+                }
+                var totalVolume = volumes.reduce((a, b) => a + b);
+                return totalVolume || 0;
             },
         },
 
