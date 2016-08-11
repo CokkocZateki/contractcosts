@@ -44,44 +44,31 @@
                 return (this.totalEvepraisalsBuy + this.totalEvepraisalsSell) / 2;
             },
 
-            collateral: function() {
-                if (this.config.collateral === 'buy') {
-                    return this.totalEvepraisalsBuy;
-                } else if (this.config.collateral === 'sell') {
-                    return this.totalEvepraisalsSell;
-                } else if (this.config.collateral === 'avg') {
-                    return this.totalEvepraisalsAvg;
-                } else {
-                    console.log('config.collateral contains a bad value');
-                }
-            },
-
-            reward: function() {
-                return this.collateral * this.config.rewardPercent;
-            },
-
             totalVolume: function() {
                 var volumes = [];
                 for (var ship of this.ships) {
-                    if (ship.condition === 'packaged') {
-                        volumes.push(ship.packagedVolume);
-                    } else if (ship.condition === 'unpackaged') {
-                        volumes.push(ship.volume);
-                    } else {
-                        console.log('bad value found in "ship.condition"');
-                    }
+                    volumes.push(this.itemVolume(ship));
                 }
                 for (var nonShip of this.nonShips) {
-                    if (nonShip.condition === 'packaged') {
-                        volumes.push(nonShip.packagedVolume || 0);
-                    } else if (nonShip.condition === 'unpackaged') {
-                        volumes.push(nonShip.volume || 0);
-                    } else {
-                        console.log('bad value found in "nonShip.condition"');
-                    }
+                    volumes.push(this.itemVolume(nonShip));
                 }
-                console.log(JSON.stringify(volumes));
-                return volumes.reduce((a, b) => a + b, 0);
+                var volume = volumes.reduce((a, b) => a + b);
+                return volume;
+            },
+
+            totalCollateral: function() {
+                var collaterals = [];
+                for (var evepraisal of this.evepraisals) {
+                    collaterals.push(this.itemsCollateral(evepraisal.items));
+                }
+                var totalCollateral = collaterals.reduce((a, b) => a + b);
+                return totalCollateral;
+            },
+
+            totalReward: function() {
+                var volumeComponent =  this.totalVolume * (this.config.reward.fullDstPrice / 60000);
+                var collateralComponent = this.totalCollateral * this.config.reward.percentOfCollateral;
+                return volumeComponent + collateralComponent;
             },
 
         },
@@ -176,16 +163,46 @@
                 this.evepraisals.$remove(evepraisal);
             },
 
-            shipVolume: function(ship) {
-                if (ship.condition === 'packaged') {
-                    return ship.packagedVolume;
+            itemCollateral: function(item) {
+                if (item.prices) {
+
+                    var buy = parseFloat(item.prices.buy.min);
+                    var sell = parseFloat(item.prices.sell.min);
+                    var qty = parseFloat(item.quantity);
+
+                    if (this.config.collateral === 'buy') {
+                        return buy * qty;
+                    } else if (this.config.collateral === 'sell') {
+                        return sell * qty;
+                    } else if (this.config.collateral === 'avg') {
+                        return ((buy + sell) / 2.0) * qty;
+                    } else {
+                        console.log('config.collateral contains a bad value');
+                    }
+                } else {
+                    return 0;
                 }
-                else if (ship.condition === 'unpackaged') {
-                    return ship.volume;
+            },
+
+            itemsCollateral: function(items) {
+                collaterals = [];
+                for (var item of items) {
+                    collaterals.push(this.itemCollateral(item));
+                }
+                var totalCollateral = collaterals.reduce((a, b) => a + b, 0);
+                return totalCollateral;
+            },
+
+            itemVolume: function(item) {
+                if (item.condition === 'packaged') {
+                    return item.packagedVolume || 0;
+                }
+                else if (item.condition === 'unpackaged') {
+                    return item.volume || 0;
                 }
                 else {
-                    console.log('bad ship.condition found');
-                    return;
+                    console.log('bad item.condition found');
+                    return 0;
                 }
             },
         },

@@ -25,9 +25,9 @@
       <div class="form-group">
         <label>Demos:</label>
         <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12173210')">Min Subcaps</button>
-        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12173438')">Min Battleships</button>
-        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12173498')">Min/Gal Battleships</button>
-        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12173550')">Nestor/Machariel</button>
+        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12186378')">Hull Myrmidon</button>
+        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12186314')">Smug Pepe Caracal</button>
+        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12186425')">Drones/Ammo for Rattle</button>
         <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/11993877')">Rolling Megathron</button>
         <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12000787')">Sisters Launcher</button>
       </div>
@@ -35,9 +35,9 @@
 
       <div v-if="evepraisals.length" class="col-lg-12">
         <h4>Collateral</h4>
-        <span class="isk">{{ collateral | currency '' 2 }}</span>
+        <span class="isk">{{ totalCollateral | currency '' 2 }}</span>
         <h4>Reward</h4>
-        <span class="isk">{{ reward | currency '' 2 }}</span>
+        <span class="isk">{{ totalReward | currency '' 2 }}</span>
         <h4>Volume</h4>
         {{ totalVolume | currency '' 2 }}
         <h4>Ships</h4>
@@ -46,7 +46,7 @@
             <tr>
               <th>Name</th>
               <th>Condition</th>
-              <th>Volume</th>
+              <th class="isk-header">Volume</th>
               <th>Evepraisal</th>
             </tr>
           </thead>
@@ -59,7 +59,7 @@
                 <input class="iradio" type="radio" id="unpackaged" value="unpackaged" v-model="ships[$index].condition">
                 <label for="unpackaged">Unpackaged</label>
               </td>
-              <td class="isk">{{ shipVolume(ship) | currency '' 2 }} m<sup>3</sup></td>
+              <td class="isk">{{ itemVolume(ship) | currency '' 2 }} m<sup>3</sup></td>
               <td>{{ ship.evepraisalID }}</td>
             </tr>
           </tbody>
