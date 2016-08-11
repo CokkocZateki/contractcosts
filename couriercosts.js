@@ -62,19 +62,25 @@
 
             volume: function() {
                 var volumes = [];
-                // var sum = 0;
-                for (var evepraisal of this.evepraisals) {
-                    for (var item of evepraisal.items) {
-                        if (item.groupID) {
-                            if (item.groupID in this.config.shipGroupIDs) {
-                                volumes.push(this.config.shipGroupIDs[item.groupID][0]);
-                            } else {
-                                volumes.push(parseFloat(item.volume));
-                            }
-                        }
+                for (var ship of this.ships) {
+                    if (ship.condition === 'packaged') {
+                        volumes.push(ship.packagedVolume);
+                    } else if (ship.condition === 'unpackaged') {
+                        volumes.push(ship.volume);
+                    } else {
+                        console.log('bad value found in "ship.condition"');
                     }
                 }
-                console.log(volumes);
+                for (var nonShip of this.nonShips) {
+                    if (nonShip.condition === 'packaged') {
+                        volumes.push(nonShip.packagedVolume || 0);
+                    } else if (nonShip.condition === 'unpackaged') {
+                        volumes.push(nonShip.volume || 0);
+                    } else {
+                        console.log('bad value found in "nonShip.condition"');
+                    }
+                }
+                console.log(JSON.stringify(volumes));
                 return volumes.reduce((a, b) => a + b, 0);
             },
 
@@ -119,27 +125,27 @@
                 addEvepraisalAJAX(url, $.proxy(function(data) {
                     // if the evepraisal was taken in the permitted market
                     if (data.market_name === this.config.permittedMarket) {
+                        // Make a copy of the incoming evepraisal and add a
+                        // timestamp to it
+                        var evepraisal = data;
+                        evepraisal.importTime = Date.now();
                         // for each item in the new evepraisal
-                        for (var item of data.items) {
+                        for (var item of evepraisal.items) {
                             // if the item is a ship
                             if (item.groupID in this.config.shipGroupIDs) {
-                                console.log('ship: ' + item.name);
                                 var ship = item;
-                                // set new property 'mutableVolume' on ship
-                                // object to packaged volume
-                                ship.mutableVolume = this.config.shipGroupIDs[ship.groupID][0];
-                                // set new evepraisalId property
-                                ship.evepraisalId = data.id;
+                                // assign some new properties
+                                ship.importTime = evepraisal.importTime;
+                                ship.packagedVolume = this.config.shipGroupIDs[ship.groupID][0];
+                                ship.condition = 'packaged';
                                 // add the the ship object to the ships structure
                                 this.ships.push(ship);
                             } else {
-                                console.log('non ship: ' + item.name);
                                 var nonShip = item;
-                                // set new property 'mutableVolume' on nonShip
-                                // object to unpackaged volume
-                                nonShip.mutableVolume = parseFloat(item.volume);
-                                // set new evepraisalId property
-                                nonShip.evepraisalId = data.id;
+                                // assign some new properties
+                                nonShip.importTime = evepraisal.importTime;
+                                nonShip.mutableVolume = NaN;
+                                nonShip.condition = 'unpackaged';
                                 // add the nonShip object to the nonShips structure
                                 this.nonShips.push(nonShip);
                             }
@@ -151,21 +157,18 @@
             },
 
             removeEvepraisal: function(evepraisal) {
-                var id = evepraisal.id;
                 var remainingShips = [];
                 var remainingNonShips = [];
                 for (var ship of this.ships) {
-                    if (ship.evepraisalId !== evepraisal.id) {
+                    if (ship.importTime !== evepraisal.importTime) {
                         remainingShips.push(ship);
                     }
                 }
                 for (var nonShip of this.nonShips) {
-                    if (nonShip.evepraisalId !== evepraisal.id) {
+                    if (nonShip.importTime !== evepraisal.importTime) {
                         remainingNonShips.push(nonShip);
                     }
                 }
-                // this.ships = Object.assign({}, remainingShips);
-                // this.nonShips = Object.assign({}, remainingNonShips);
                 this.ships = remainingShips;
                 this.nonShips = remainingNonShips;
                 this.evepraisals.$remove(evepraisal);
