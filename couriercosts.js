@@ -12,11 +12,17 @@
         data: {
             config: config,
             evepraisals: [],
+            nonShips: [],
+            ships: [],
             newValue: '',
         },
 
         // computed properties
         computed: {
+
+            shipsRepr: function() {
+                return JSON.stringify(this.ships);
+            },
 
             totalEvepraisalsBuy: function() {
                 var sum = 0;
@@ -111,12 +117,57 @@
                 }
 
                 addEvepraisalAJAX(url, $.proxy(function(data) {
-                    this.evepraisals.push(data);
+                    // if the evepraisal was taken in the permitted market
+                    if (data.market_name === this.config.permittedMarket) {
+                        // for each item in the new evepraisal
+                        for (var item of data.items) {
+                            // if the item is a ship
+                            if (item.groupID in this.config.shipGroupIDs) {
+                                console.log('ship: ' + item.name);
+                                var ship = item;
+                                // set new property 'mutableVolume' on ship
+                                // object to packaged volume
+                                ship.mutableVolume = this.config.shipGroupIDs[ship.groupID][0];
+                                // set new evepraisalId property
+                                ship.evepraisalId = data.id;
+                                // add the the ship object to the ships structure
+                                this.ships.push(ship);
+                            } else {
+                                console.log('non ship: ' + item.name);
+                                var nonShip = item;
+                                // set new property 'mutableVolume' on nonShip
+                                // object to unpackaged volume
+                                nonShip.mutableVolume = parseFloat(item.volume);
+                                // set new evepraisalId property
+                                nonShip.evepraisalId = data.id;
+                                // add the nonShip object to the nonShips structure
+                                this.nonShips.push(nonShip);
+                            }
+                        }
+                        this.evepraisals.push(data);
+                    }
                 }, this));
 
             },
 
             removeEvepraisal: function(evepraisal) {
+                var id = evepraisal.id;
+                var remainingShips = [];
+                var remainingNonShips = [];
+                for (var ship of this.ships) {
+                    if (ship.evepraisalId !== evepraisal.id) {
+                        remainingShips.push(ship);
+                    }
+                }
+                for (var nonShip of this.nonShips) {
+                    if (nonShip.evepraisalId !== evepraisal.id) {
+                        remainingNonShips.push(nonShip);
+                    }
+                }
+                // this.ships = Object.assign({}, remainingShips);
+                // this.nonShips = Object.assign({}, remainingNonShips);
+                this.ships = remainingShips;
+                this.nonShips = remainingNonShips;
                 this.evepraisals.$remove(evepraisal);
             },
 

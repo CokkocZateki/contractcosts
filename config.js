@@ -1,9 +1,13 @@
-// The 'config' object's properties store the basic configureable settings of
-// the app.  Change or add to them as desired.
+// The 'config' object's properties store the basic configureable settings and
+// constants of the app.  Change or add to them as desired.
 
 var config = {
 
-    // supports any of these three values: 'buy', 'sell', 'avg'
+    // only evepraisals taken from the specified market will be accepted.
+    // Possible values: 'Jita', 'Amarr', 'Dodixie', 'Rens', 'Hek', 'Universe'
+    permittedMarket: 'Jita',
+
+    // set to any of these three values: 'buy', 'sell', 'avg'
     collateral: 'sell',
     
     // hauler's reward, calculated as a percentage of the collateral

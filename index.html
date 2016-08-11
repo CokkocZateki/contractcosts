@@ -18,7 +18,7 @@
       <h1>Courier Costs</h1>
 
       <div class="form-group">
-        <label for="input-evepraisals">Input ISK amounts and Evepraisal links:</label>
+        <label for="input-evepraisals">Input Evepraisal links (only Jita accepted):</label>
         <textarea id="input-evepraisals" class="form-control" placeholder="{{ 'Supports pasting multiple lines\nPress ENTER to submit' }}" autofocus v-model="newValue" @keyup.enter="addValue"></textarea>
       </div>
 
@@ -34,13 +34,30 @@
 
 
       <div v-if="evepraisals.length" class="col-lg-12">
-        <h2>Collateral</h2>
+        <h4>Collateral</h4>
         <span class="isk">{{ collateral | currency '' 2 }}</span>
-        <h2>Reward</h2>
+        <h4>Reward</h4>
         <span class="isk">{{ reward | currency '' 2 }}</span>
-        <h2>Volume</h2>
+        <h4>Volume</h4>
         {{ volume | currency '' 2 }}
-        <h2>Evepraisals</h2>
+        <h4>Ships</h4>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Mass</th>
+              <th>Evepraisal</th>
+            </tr>
+          </thead>
+          <tbody v-for="ship in ships">
+            <tr>
+              <td>{{ ship.name }}</td>
+              <td>{{ ship.mutableVolume }}</td>
+              <td>{{ ship.evepraisalId }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <h4>Evepraisals</h4>
         <table class="table">
           <thead>
             <tr>
