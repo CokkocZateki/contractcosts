@@ -39,21 +39,28 @@
         <h4>Reward</h4>
         <span class="isk">{{ reward | currency '' 2 }}</span>
         <h4>Volume</h4>
-        {{ volume | currency '' 2 }}
+        {{ totalVolume | currency '' 2 }}
         <h4>Ships</h4>
         <table class="table">
           <thead>
             <tr>
               <th>Name</th>
-              <th>Mass</th>
+              <th>Condition</th>
+              <th>Volume</th>
               <th>Evepraisal</th>
             </tr>
           </thead>
           <tbody v-for="ship in ships">
             <tr>
               <td>{{ ship.name }}</td>
-              <td>{{ ship.mutableVolume }}</td>
-              <td>{{ ship.evepraisalId }}</td>
+              <td>
+                <label for="packaged">Packaged</label>
+                <input class="iradio" type="radio" id="packaged" value="packaged" v-model="ships[$index].condition" checked>
+                <input class="iradio" type="radio" id="unpackaged" value="unpackaged" v-model="ships[$index].condition">
+                <label for="unpackaged">Unpackaged</label>
+              </td>
+              <td class="isk">{{ shipVolume(ship) | currency '' 2 }} m<sup>3</sup></td>
+              <td>{{ ship.evepraisalID }}</td>
             </tr>
           </tbody>
         </table>

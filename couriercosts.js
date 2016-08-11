@@ -60,7 +60,7 @@
                 return this.collateral * this.config.rewardPercent;
             },
 
-            volume: function() {
+            totalVolume: function() {
                 var volumes = [];
                 for (var ship of this.ships) {
                     if (ship.condition === 'packaged') {
@@ -136,6 +136,7 @@
                                 var ship = item;
                                 // assign some new properties
                                 ship.importTime = evepraisal.importTime;
+                                ship.evepraisalID = evepraisal.id;
                                 ship.packagedVolume = this.config.shipGroupIDs[ship.groupID][0];
                                 ship.condition = 'packaged';
                                 // add the the ship object to the ships structure
@@ -144,6 +145,7 @@
                                 var nonShip = item;
                                 // assign some new properties
                                 nonShip.importTime = evepraisal.importTime;
+                                nonShip.evepraisalID = evepraisal.id;
                                 nonShip.mutableVolume = NaN;
                                 nonShip.condition = 'unpackaged';
                                 // add the nonShip object to the nonShips structure
@@ -174,12 +176,18 @@
                 this.evepraisals.$remove(evepraisal);
             },
 
-            // package: function(item) {
-            //     if (!(item.groupID in this.config.shipGroupIDs)) {
-            //         return;
-            //     }
-            // }
-
+            shipVolume: function(ship) {
+                if (ship.condition === 'packaged') {
+                    return ship.packagedVolume;
+                }
+                else if (ship.condition === 'unpackaged') {
+                    return ship.volume;
+                }
+                else {
+                    console.log('bad ship.condition found');
+                    return;
+                }
+            },
         },
 
 
