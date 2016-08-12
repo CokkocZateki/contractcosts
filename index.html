@@ -42,12 +42,12 @@
         <div class="row">
           <div class="col-lg-4">
             <h3>Volume</h3>
-            <p>{{ dstSkillRequired }} m<sup>3</sup> <span v-if="excessVolume > 0">(<span class="isk">{{ excessVolume | currency '' 2 }}</span> over)</span></p>
+            <p>{{ dstSkillRequired }} <span v-if="excessVolume > 0">(<span class="isk">{{ excessVolume | currency '' 2 }} m<sup>3</sup></span> over)</span></p>
             <table class="table">
               <tbody>
                 <tr>
                   <th>Volume</th>
-                  <td class="isk">{{ totalVolume | currency '' 2 }}</td>
+                  <td class="isk">{{ totalVolume | currency '' 2 }} m<sup>3</sup></td>
                 </tr>
               </tbody>
               <tfoot>
