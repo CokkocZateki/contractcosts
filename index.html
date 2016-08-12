@@ -33,7 +33,17 @@
       </div>
 
       <div v-if="evepraisals.length" class="col-lg-12">
-        <h4>Evepraisals</h4>
+        <h2>Overview</h2>
+        <h3>Courier Contract Values</h3>
+        <ul>
+          <li>Collateral: {{ totalCollateral | currency '' 2 }}</li>
+          <li>Reward: {{ totalReward | currency '' 2 }}</li>
+        </ul>
+        <h3>Buy Contract Values</h3>
+        <ul>
+          <li>Price: {{ totalCollateral + totalReward | currency '' 2 }}</li>
+        </ul>
+        <h2>Evepraisals</h2>
         <table class="table">
           <thead>
             <tr>
@@ -58,23 +68,23 @@
               <td class="table-button"><button class="btn btn-danger btn-xs" @click="removeEvepraisal(evepraisal)">x</button></td>
             </tr>
 
-            <tr v-if="evepraisalNonShips(evepraisal).length">
+            <tr v-if="nonShips[evepraisal.importTime].length">
               <td>&#8627;</td>
-              <td>Non-Ship Items</td>
+              <td>{{ nonShips[evepraisal.importTime].length }} Non-Ship Items</td>
               <td></td>
-              <td class="isk">{{ itemsVolume(evepraisalNonShips(evepraisal)) | currency '' 2 }}</td>
-              <td class="isk">{{ itemsCollateral(evepraisalNonShips(evepraisal)) | currency '' 2 }}</td>
-              <td class="isk">{{ itemsReward(evepraisalNonShips(evepraisal)) | currency '' 2 }}</td>
+              <td class="isk">{{ itemsVolume(nonShips[evepraisal.importTime]) | currency '' 2 }} m<sup>3</sup></td>
+              <td class="isk">{{ itemsCollateral(nonShips[evepraisal.importTime]) | currency '' 2 }}</td>
+              <td class="isk">{{ itemsReward(nonShips[evepraisal.importTime]) | currency '' 2 }}</td>
               <td></td>
             </tr>
 
-            <tr v-for="ship in evepraisalShips(evepraisal)">
+            <tr v-for="ship of ships[evepraisal.importTime]">
               <td>&#8627;</td>
               <td>{{ ship.name }}</td>
               <td>
                 <label for="packaged">Packed</label>
-                <input class="iradio" type="radio" id="packaged" value="packaged" v-model="ships[$index].condition" checked>
-                <input class="iradio" type="radio" id="unpackaged" value="unpackaged" v-model="ships[$index].condition">
+                <input class="iradio" type="radio" id="packaged" value="packaged" v-model="ships[evepraisal.importTime][$index].condition" checked>
+                <input class="iradio" type="radio" id="unpackaged" value="unpackaged" v-model="ships[evepraisal.importTime][$index].condition">
                 <label for="unpackaged">Unpacked</label>
               </td>
               <td class="isk">{{ itemVolume(ship) | currency '' 2 }} m<sup>3</sup></td>
