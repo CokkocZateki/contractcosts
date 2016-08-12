@@ -15,97 +15,161 @@
 
     <div id="couriercosts">
 
-      <h1>Courier Costs</h1>
+      <div class="row">
+        <col-lg-12>
+          <h1>Contract Costs</h1>
 
-      <div class="form-group">
-        <label for="input-evepraisals">Input Evepraisal links (only Jita accepted):</label>
-        <textarea id="input-evepraisals" class="form-control" placeholder="{{ 'Supports pasting multiple lines\nPress ENTER to submit' }}" autofocus v-model="newValue" @keyup.enter="addValue"></textarea>
+          <div class="form-group">
+            <label for="input-evepraisals">Input Evepraisal links (only Jita accepted):</label>
+            <textarea id="input-evepraisals" class="form-control" placeholder="{{ 'Supports pasting multiple lines\nPress ENTER to submit' }}" autofocus v-model="newValue" @keyup.enter="addValue"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Demos:</label>
+            <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12173210')">Min Subcaps</button>
+            <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12186378')">Hull Myrmidon</button>
+            <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12186314')">Smug Pepe Caracal</button>
+            <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12186425')">Drones/Ammo for Rattle</button>
+            <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/11993877')">Rolling Megathron</button>
+            <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12000787')">Sisters Launcher</button>
+          </div>
+        </col-lg-12>
       </div>
 
-      <div class="form-group">
-        <label>Demos:</label>
-        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12173210')">Min Subcaps</button>
-        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12186378')">Hull Myrmidon</button>
-        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12186314')">Smug Pepe Caracal</button>
-        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12186425')">Drones/Ammo for Rattle</button>
-        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/11993877')">Rolling Megathron</button>
-        <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12000787')">Sisters Launcher</button>
-      </div>
-
-      <div v-if="evepraisals.length" class="col-lg-12">
+      <div v-if="evepraisals.length" class="row">
         <h2>Overview</h2>
-        <h3>Courier Contract Values</h3>
-        <ul>
-          <li>Collateral: {{ totalCollateral | currency '' 2 }}</li>
-          <li>Reward: {{ totalReward | currency '' 2 }}</li>
-        </ul>
-        <h3>Buy Contract Values</h3>
-        <ul>
-          <li>Price: {{ totalCollateral + totalReward | currency '' 2 }}</li>
-        </ul>
-        <h2>Evepraisals</h2>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Link</th>
-              <th>Type</th>
-              <th>Condition</th>
-              <th class="isk-header">Volume</th>
-              <th class="isk-header">Collateral (Jita Sell)</th>
-              <th class="isk-header">Reward</th>
-              <th>Remove</th>
-            </tr>
-          </thead>
-          <tbody v-for="evepraisal in evepraisals">
 
-            <tr>
-              <td><a target="_blank" href="http://evepraisal.com/e/{{ evepraisal.id }}">{{ evepraisal.id }}</a> ({{ evepraisal.kind }})</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td class="table-button"><button class="btn btn-danger btn-xs" @click="removeEvepraisal(evepraisal)">x</button></td>
-            </tr>
+        <div class="row">
+          <div class="col-lg-4">
+            <h3>Volume</h3>
+            <p>{{ dstSkillRequired }} m<sup>3</sup> <span v-if="excessVolume > 0">(<span class="isk">{{ excessVolume | currency '' 2 }}</span> over)</span></p>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <th>Volume</th>
+                  <td class="isk">{{ totalVolume | currency '' 2 }}</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <div class="col-lg-4">
+            <h3>Courier Contract</h3>
+            <p>Set the values of your contract as follows:</p>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <th>Collateral</th>
+                  <td class="isk">{{ totalCollateral | currency '' 2 }}</td>
+                </tr>
+                <tr>
+                  <th>Reward</th>
+                  <td class="isk">{{ totalReward | currency '' 2 }}</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
 
-            <tr v-if="nonShips[evepraisal.importTime].length">
-              <td>&#8627;</td>
-              <td>{{ nonShips[evepraisal.importTime].length }} Non-Ship Items</td>
-              <td></td>
-              <td class="isk">{{ itemsVolume(nonShips[evepraisal.importTime]) | currency '' 2 }} m<sup>3</sup></td>
-              <td class="isk">{{ itemsCollateral(nonShips[evepraisal.importTime]) | currency '' 2 }}</td>
-              <td class="isk">{{ itemsReward(nonShips[evepraisal.importTime]) | currency '' 2 }}</td>
-              <td></td>
-            </tr>
+          </div>
+          <div class="col-lg-4">
+            <h3>Buy Contract</h3>
+            <p>Set the value of your contract as follows:</p>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <th>Price</th>
+                  <td class="isk">{{ totalCollateral + totalReward | currency '' 2 }}</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
 
-            <tr v-for="ship of ships[evepraisal.importTime]">
-              <td>&#8627;</td>
-              <td>{{ ship.name }}</td>
-              <td>
-                <label for="packaged">Packed</label>
-                <input class="iradio" type="radio" id="packaged" value="packaged" v-model="ships[evepraisal.importTime][$index].condition" checked>
-                <input class="iradio" type="radio" id="unpackaged" value="unpackaged" v-model="ships[evepraisal.importTime][$index].condition">
-                <label for="unpackaged">Unpacked</label>
-              </td>
-              <td class="isk">{{ itemVolume(ship) | currency '' 2 }} m<sup>3</sup></td>
-              <td class="isk">{{ itemCollateral(ship) | currency '' 2 }}</td>
-              <td class="isk">{{ itemReward(ship) | currency '' 2 }}</td>
-              <td></td>
-            </tr>
+          </div>
+        </div>
 
-          </tbody>
-          <tfoot>
-            <tr>
-              <th>Totals:</th>
-              <th></th>
-              <th></th>
-              <th class="isk">{{ totalVolume | currency '' 2 }}</th>
-              <th class="isk">{{ totalCollateral | currency '' 2 }}</th>
-              <th class="isk">{{ totalReward | currency '' 2 }}</th>
-              <th></th>
-            </tr>
-          </tfoot>
-        </table>
+        <div class="row">
+          <div class="col-lg-12">
+
+            <h2>Evepraisals</h2>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Link</th>
+                  <th>Type</th>
+                  <th>Condition</th>
+                  <th class="isk-header">Volume</th>
+                  <th class="isk-header">Collateral (Jita Sell)</th>
+                  <th class="isk-header">Reward</th>
+                  <th>Remove</th>
+                </tr>
+              </thead>
+              <tbody v-for="evepraisal in evepraisals">
+
+                <tr>
+                  <td><a target="_blank" href="http://evepraisal.com/e/{{ evepraisal.id }}">{{ evepraisal.id }}</a> ({{ evepraisal.kind }})</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td class="table-button"><button class="btn btn-danger btn-xs" @click="removeEvepraisal(evepraisal)">x</button></td>
+                </tr>
+
+                <tr v-if="nonShips[evepraisal.importTime].length">
+                  <td>&#8627;</td>
+                  <td>{{ nonShips[evepraisal.importTime].length }} Non-Ship Items</td>
+                  <td></td>
+                  <td class="isk">{{ itemsVolume(nonShips[evepraisal.importTime]) | currency '' 2 }} m<sup>3</sup></td>
+                  <td class="isk">{{ itemsCollateral(nonShips[evepraisal.importTime]) | currency '' 2 }}</td>
+                  <td class="isk">{{ itemsReward(nonShips[evepraisal.importTime]) | currency '' 2 }}</td>
+                  <td></td>
+                </tr>
+
+                <tr v-for="ship of ships[evepraisal.importTime]">
+                  <td>&#8627;</td>
+                  <td>{{ ship.name }}</td>
+                  <td>
+                    <label for="packaged">Packed</label>
+                    <input class="iradio" type="radio" id="packaged" value="packaged" v-model="ships[evepraisal.importTime][$index].condition" checked>
+                    <input class="iradio" type="radio" id="unpackaged" value="unpackaged" v-model="ships[evepraisal.importTime][$index].condition">
+                    <label for="unpackaged">Unpacked</label>
+                  </td>
+                  <td class="isk">{{ itemVolume(ship) | currency '' 2 }} m<sup>3</sup></td>
+                  <td class="isk">{{ itemCollateral(ship) | currency '' 2 }}</td>
+                  <td class="isk">{{ itemReward(ship) | currency '' 2 }}</td>
+                  <td></td>
+                </tr>
+
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Totals:</th>
+                  <th></th>
+                  <th></th>
+                  <th class="isk">{{ totalVolume | currency '' 2 }}</th>
+                  <th class="isk">{{ totalCollateral | currency '' 2 }}</th>
+                  <th class="isk">{{ totalReward | currency '' 2 }}</th>
+                  <th></th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -114,6 +178,7 @@
     <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
 
     <script type="text/javascript" src="config.js"></script>
+    <script type="text/javascript" src="staticData.js"></script>
     <script type="text/javascript" src="couriercosts.js"></script>
 
   </body>

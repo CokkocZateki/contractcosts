@@ -11,6 +11,7 @@
         // app initial state
         data: {
             config: config,
+            staticData: staticData,
             evepraisals: [],
             nonShips: {},
             ships: {},
@@ -101,6 +102,34 @@
                 return this.itemsReward(this.allItems);
             },
 
+            /**
+             * @returns {String} Specifying what level of Transport Ships is needed to carry the contract
+             */
+            dstSkillRequired: function() {
+                var volume = this.totalVolume;
+                if (volume < staticData.dstCargo[1]) {
+                    return 'Requires DST with Transport Ships I.';
+                } else if (this.staticData.dstCargo[1] < volume && volume < this.staticData.dstCargo[2]) {
+                    return 'Requires DST with Transport Ships II';
+                } else if (this.staticData.dstCargo[2] < volume && volume < this.staticData.dstCargo[3]) {
+                    return 'Requires DST with Transport Ships III';
+                } else if (this.staticData.dstCargo[3] < volume && volume < this.staticData.dstCargo[4]) {
+                    return 'Requires DST with Transport Ships IV';
+                } else if (this.staticData.dstCargo[4] < volume && volume < this.staticData.dstCargo[5]) {
+                    return 'Requires DST with Transport Ships V';
+                } else if (this.staticData.dstCargo[5] < volume) {
+                    return 'WARNING: Too large for a DST';
+                } else {
+                    console.log("This should not happen.");
+                }
+            },
+
+            /**
+             * @returns {Float} The difference between the contract volume and a maxed DST
+             */
+            excessVolume: function() {
+                return this.totalVolume - this.staticData.dstCargo[5];
+            },
         },
 
         // methods that implement data logic
@@ -167,11 +196,11 @@
                         for (var item of evepraisal.items) {
 
                             // if the item is a ship
-                            if (item.groupID in this.config.shipGroupIDs) {
+                            if (item.groupID in this.staticData.shipGroupIDs) {
                                 var ship = item; // make a local copy to assign some new properties
                                 ship.importTime = evepraisal.importTime;
                                 ship.evepraisalID = evepraisal.id;
-                                ship.packagedVolume = this.config.shipGroupIDs[ship.groupID][0];
+                                ship.packagedVolume = this.staticData.shipGroupIDs[ship.groupID][0];
                                 ship.condition = 'packaged';
                                 // add the the ship object to this.ships
                                 this.ships[evepraisal.importTime].push(ship);
@@ -336,25 +365,6 @@
                 return totalReward || 0;
             },
 
-            // evepraisalShips: function(evepraisal) {
-            //     var result = [];
-            //     for (var ship of this.ships) {
-            //         if (ship.importTime === evepraisal.importTime) {
-            //             result.push(ship);
-            //         }
-            //     }
-            //     return result;
-            // },
-
-            // evepraisalNonShips: function(evepraisal) {
-            //     var result = [];
-            //     for (var nonShip of this.nonShips) {
-            //         if (nonShip.importTime === evepraisal.importTime) {
-            //             result.push(nonShip);
-            //         }
-            //     }
-            //     return result;
-            // },
         },
 
 
