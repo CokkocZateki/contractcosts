@@ -24,10 +24,17 @@
                 return JSON.stringify(this.ships);
             },
 
+
+            /**
+             * @returns {Array} An array including all items (ship and nonship) drawn from every evepraisal.
+             */
             allItems: function() {
                 return this.ships.concat(this.nonShips);
             },
 
+            /**
+             * @returns {Number} Sum of the buy values of all evepraisals.
+             */
             totalEvepraisalsBuy: function() {
                 var sum = 0;
                 for (var evepraisal of this.evepraisals) {
@@ -36,6 +43,9 @@
                 return sum;
             },
 
+            /**
+             * @returns {Number} Sum of the sell values of all evepraisals.
+             */
             totalEvepraisalsSell: function() {
                 var sum = 0;
                 for (var evepraisal of this.evepraisals) {
@@ -44,15 +54,24 @@
                 return sum;
             },
 
+            /**
+             * @returns {Number} Average of the total sell and total buy values.
+             */
             totalEvepraisalsAvg: function() {
                 return (this.totalEvepraisalsBuy + this.totalEvepraisalsSell) / 2;
             },
 
+            /**
+             * @returns {Number} Sum of the volumes of all items.
+             */
             totalVolume: function() {
                 // var allItems = this.ships.concat(this.nonShips);
                 return this.itemsVolume(this.allItems);
             },
 
+            /**
+             * @returns {Number} Sum of the collaterals of all items.
+             */
             totalCollateral: function() {
                 // var collaterals = [];
                 // for (var evepraisal of this.evepraisals) {
@@ -63,6 +82,9 @@
                 return this.itemsCollateral(this.allItems);
             },
 
+            /**
+             * @returns {Number} Sum of the rewards of all items.
+             */
             totalReward: function() {
                 // var volumeComponent =  this.totalVolume * (this.config.reward.fullDstPrice / 60000);
                 // var collateralComponent = this.totalCollateral * this.config.reward.percentOfCollateral;
@@ -75,11 +97,18 @@
         // methods that implement data logic
         methods: {
 
+            /**
+             * Provides a way to call addValue() having to use the frontend's form
+             * @param {String} value Valid Evepraisal URL
+             */
             demoAddValue: function(value) {
                 this.newValue = value;
                 this.addValue();
             },
 
+            /**
+             * Splits up form input and calls addEvepraisal() on each valid Evepraisal URL
+             */
             addValue: function() {
                 var value = this.newValue && this.newValue.trim();
                 if (!value) {
@@ -96,8 +125,16 @@
                 this.newValue = '';
             },
 
+            /**
+             * Gets data from Evepraisal and stores it locally
+             * @param {String} url Valid Evepraisal URL
+             */
             addEvepraisal: function(url) {
 
+                /**
+                 * @param {String} url Valid Evepraisal URL
+                 * @param {Function} callbackFunction Function to be executed after the Evepraisal AJAX request succeeds
+                 */
                 function addEvepraisalAJAX(url, callbackFunction) {
                     $.ajax({
                         dataType: 'json',
@@ -144,6 +181,11 @@
 
             },
 
+            /**
+             * Removes all objects associated with a passed Evepraisal from this.ships, this.nonShips and this.evepraisals
+             * @param {Object} evepraisal
+             * @param {Integer} evepraisal.importTime
+             */
             removeEvepraisal: function(evepraisal) {
                 var remainingShips = [];
                 var remainingNonShips = [];
@@ -162,13 +204,24 @@
                 this.evepraisals.$remove(evepraisal);
             },
 
+            /**
+             * @param {Object} item
+             * @param {Object} item.prices
+             * @param {Float} item.prices.buy.min
+             * @param {Float} item.prices.sell.min
+             * @param {Integer} item.quantity
+             * @returns {Float} Collateral needed for the item, based on its price
+             */
             itemCollateral: function(item) {
+                // if the item has prices (handles Evepraisal's stubs from parsing errors)
                 if (item.prices) {
 
+                    // save basic properties as local variables
                     var buy = parseFloat(item.prices.buy.min);
                     var sell = parseFloat(item.prices.sell.min);
                     var qty = parseFloat(item.quantity);
 
+                    // calculate the collateral based on the settings in the config file
                     if (this.config.collateral === 'buy') {
                         return buy * qty;
                     } else if (this.config.collateral === 'sell') {
@@ -178,20 +231,34 @@
                     } else {
                         console.log('config.collateral contains a bad value');
                     }
-                } else {
+                }
+
+                // if the item doesn't have prices, assume zero collateral
+                else {
                     return 0;
                 }
             },
 
+            /**
+             * @param {Array} items
+             * @returns {Float} Total collateral needed for the array of items, based on their prices
+             */
             itemsCollateral: function(items) {
                 collaterals = [];
                 for (var item of items) {
                     collaterals.push(this.itemCollateral(item));
                 }
                 var totalCollateral = collaterals.reduce((a, b) => a + b);
-                return totalCollateral;
+                return totalCollateral || 0;
             },
 
+            /**
+             * @param {Object} item
+             * @param {String} item.condition
+             * @param {Float} item.packagedVolume
+             * @param {Float} item.volume
+             * @returns {Float} Volume of the item, based on its condition (packaged/unpackaged)
+             */
             itemVolume: function(item) {
                 if (item.condition === 'packaged') {
                     return item.packagedVolume || 0;
@@ -205,6 +272,10 @@
                 }
             },
 
+            /**
+             * @param {Array} items
+             * @returns {Float} Total volume of the array of items, based on their conditions (packaged/unpackaged)
+             */
             itemsVolume: function(items) {
                 var volumes = [];
                 for (var item of items) {
@@ -214,12 +285,20 @@
                 return totalVolume || 0;
             },
 
+            /**
+             * @param {Object} item
+             * @return {Float} Reward needed for the item, based on its collateral and volume
+             */
             itemReward: function(item) {
                 var volumeComponent = this.itemVolume(item) * (this.config.reward.fullDstPrice / 60000);
                 var collateralComponent = this.itemCollateral(item) * this.config.reward.percentOfCollateral;
                 return volumeComponent + collateralComponent;
             },
 
+            /**
+             * @param {Array} items
+             * @return {Float} Total reward needed for the array of items, based on their collaterals and volumes
+             */
             itemsReward: function(items) {
                 var rewards = [];
                 for (var item of items) {
