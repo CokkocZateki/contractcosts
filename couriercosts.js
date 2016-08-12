@@ -228,6 +228,26 @@
                 var totalReward = rewards.reduce((a, b) => a + b);
                 return totalReward || 0;
             },
+
+            evepraisalShips: function(evepraisal) {
+                var result = [];
+                for (var ship of this.ships) {
+                    if (ship.importTime === evepraisal.importTime) {
+                        result.push(ship);
+                    }
+                }
+                return result;
+            },
+
+            evepraisalNonShips: function(evepraisal) {
+                var result = [];
+                for (var nonShip of this.nonShips) {
+                    if (nonShip.importTime === evepraisal.importTime) {
+                        result.push(nonShip);
+                    }
+                }
+                return result;
+            },
         },
 
 

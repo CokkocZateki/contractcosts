@@ -32,26 +32,44 @@
         <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12000787')">Sisters Launcher</button>
       </div>
 
-
       <div v-if="evepraisals.length" class="col-lg-12">
-        <!-- <h4>Collateral</h4>
-        <span class="isk">{{ totalCollateral | currency '' 2 }}</span>
-        <h4>Reward</h4>
-        <span class="isk">{{ totalReward | currency '' 2 }}</span>
-        <h4>Volume</h4>
-        {{ totalVolume | currency '' 2 }} -->
-        <h4>Ships</h4>
+        <h4>Evepraisals</h4>
         <table class="table">
           <thead>
             <tr>
-              <th>Name</th>
+              <th>Link</th>
+              <th>Type</th>
               <th>Condition</th>
               <th class="isk-header">Volume</th>
-              <th>Evepraisal</th>
+              <th class="isk-header">Collateral (Jita Sell)</th>
+              <th class="isk-header">Reward</th>
+              <th>Remove</th>
             </tr>
           </thead>
-          <tbody v-for="ship in ships">
+          <tbody v-for="evepraisal in evepraisals">
+
             <tr>
+              <td><a target="_blank" href="http://evepraisal.com/e/{{ evepraisal.id }}">{{ evepraisal.id }}</a> ({{ evepraisal.kind }})</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="table-button"><button class="btn btn-danger btn-xs" @click="removeEvepraisal(evepraisal)">x</button></td>
+            </tr>
+
+            <tr v-if="evepraisalNonShips(evepraisal).length">
+              <td>&#8627;</td>
+              <td>Non-Ship Items</td>
+              <td></td>
+              <td class="isk">{{ itemsVolume(evepraisalNonShips(evepraisal)) | currency '' 2 }}</td>
+              <td class="isk">{{ itemsCollateral(evepraisalNonShips(evepraisal)) | currency '' 2 }}</td>
+              <td class="isk">{{ itemsReward(evepraisalNonShips(evepraisal)) | currency '' 2 }}</td>
+              <td></td>
+            </tr>
+
+            <tr v-for="ship in evepraisalShips(evepraisal)">
+              <td>&#8627;</td>
               <td>{{ ship.name }}</td>
               <td>
                 <label for="packaged">Packed</label>
@@ -60,39 +78,11 @@
                 <label for="unpackaged">Unpacked</label>
               </td>
               <td class="isk">{{ itemVolume(ship) | currency '' 2 }} m<sup>3</sup></td>
-              <td>{{ ship.evepraisalID }}</td>
+              <td class="isk">{{ itemCollateral(ship) | currency '' 2 }}</td>
+              <td class="isk">{{ itemReward(ship) | currency '' 2 }}</td>
+              <td></td>
             </tr>
-          </tbody>
-        </table>
-        <h4>Evepraisals</h4>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Link</th>
-              <th>Hub</th>
-              <th>Type</th>
-              <th class="isk-header">Volume</th>
-              <th class="isk-header">Collateral (Jita Sell)</th>
-              <th class="isk-header">Reward</th>
-              <!-- <th class="isk-header">Buy</th>
-              <th class="isk-header">Sell</th>
-              <th class="isk-header">Average</th> -->
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="evepraisal in evepraisals">
-              <td><a target="_blank" href="http://evepraisal.com/e/{{ evepraisal.id }}">{{ evepraisal.id }}</a></td>
-              <td>{{ evepraisal.market_name }}</td>
-              <td>{{ evepraisal.kind }}</td>
-              <td class="isk">{{ itemsVolume(evepraisal.items) | currency '' 2 }}</td>
-              <td class="isk">{{ itemsCollateral(evepraisal.items) | currency '' 2 }}</td>
-              <td class="isk">{{ itemsReward(evepraisal.items) | currency '' 2 }}</td>
-              <!-- <td class="isk">{{ evepraisal.totals.buy | currency '' 2 }}</td>
-              <td class="isk">{{ evepraisal.totals.sell | currency '' 2 }}</td>
-              <td class="isk">{{ (evepraisal.totals.buy + evepraisal.totals.sell) / 2 | currency '' 2 }}</td> -->
-              <td class="table-button"><button class="btn btn-danger btn-xs" @click="removeEvepraisal(evepraisal)">x</button></td>
-            </tr>
+
           </tbody>
           <tfoot>
             <tr>
@@ -102,19 +92,12 @@
               <th class="isk">{{ totalVolume | currency '' 2 }}</th>
               <th class="isk">{{ totalCollateral | currency '' 2 }}</th>
               <th class="isk">{{ totalReward | currency '' 2 }}</th>
-              <!-- <th class="isk">{{ totalEvepraisalsBuy | currency '' 2 }}</th>
-              <th class="isk">{{ totalEvepraisalsSell | currency '' 2 }}</th>
-              <th class="isk">{{ totalEvepraisalsAvg | currency '' 2 }}</th> -->
               <th></th>
             </tr>
           </tfoot>
         </table>
       </div>
-
     </div>
-
-
-
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
     <script type="text/javascript" src="bootstrap/js/jquery-1.11.3.min.js"></script>
