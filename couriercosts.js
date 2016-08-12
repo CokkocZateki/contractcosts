@@ -318,10 +318,10 @@
              */
             itemVolume: function(item) {
                 if (item.condition === 'packaged') {
-                    return item.packagedVolume || 0;
+                    return (item.packagedVolume || 0) * item.quantity;
                 }
                 else if (item.condition === 'unpackaged') {
-                    return item.volume || 0;
+                    return (item.volume || 0) * item.quantity;
                 }
                 else {
                     console.log('bad item.condition found: ' + JSON.stringify(item.condition));
