@@ -15,9 +15,10 @@
 
     <div id="couriercosts">
 
+      <h1>Contract Costs</h1>
+
       <div class="row">
-        <col-lg-12>
-          <h1>Contract Costs</h1>
+        <div class="col-lg-6">
 
           <div class="form-group">
             <label for="input-evepraisals">Input Evepraisal links (only Jita accepted):</label>
@@ -27,13 +28,26 @@
           <div class="form-group">
             <label>Demos:</label>
             <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12173210')">Min Subcaps</button>
-            <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12201915')">One month one character PI</button>
+            <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12201915')">One month PI</button>
             <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12186314')">Smug Pepe Caracal</button>
             <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12186425')">Drones/Ammo for Rattle</button>
             <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/11993877')">Rolling Megathron</button>
             <button class="btn btn-default" @click="demoAddValue('http://evepraisal.com/e/12000787')">Sisters Launcher</button>
           </div>
-        </col-lg-12>
+        </div>
+
+        <div class="col-lg-6">
+          <label for="algorithm-description">Reward is calculated by summing the following components:</label>
+          <div class="panel panel-default" id="algorithm-description">
+            <div class="panel-body">
+              <ul>
+                <li><span class="isk">{{ config.reward.baseFee | currency '' 2}}</span> ISK base fee</li>
+                <li><span class="isk">{{ config.reward.fullDstPrice / staticData.dstCargo[5] | currency '' 2}}</span> ISK / m<sup>3</sup></li>
+                <li><span class="isk">{{ config.reward.percentOfCollateral * 100}}% of collateral</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div v-if="evepraisals.length" class="row">

@@ -96,10 +96,10 @@
             },
 
             /**
-             * @returns {Number} Sum of the rewards of all items.
+             * @returns {Number} Sum of the rewards of all items, plus a base fee.
              */
             totalReward: function() {
-                return this.itemsReward(this.allItems);
+                return this.itemsReward(this.allItems) + this.config.reward.baseFee;
             },
 
             /**
