@@ -347,7 +347,7 @@
              * @return {Float} Reward needed for the item, based on its collateral and volume
              */
             itemReward: function(item) {
-                var volumeComponent = this.itemVolume(item) * (this.config.reward.fullDstPrice / 62500);
+                var volumeComponent = this.itemVolume(item) * (this.config.reward.fullDstPrice / this.staticData.dstCargo[5]);
                 var collateralComponent = this.itemCollateral(item) * this.config.reward.percentOfCollateral;
                 return volumeComponent + collateralComponent;
             },
