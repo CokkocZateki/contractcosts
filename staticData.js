@@ -3,11 +3,11 @@ var staticData = {
 	// DST fleet hangar capacity for all levels of the Transport Skill
 	dstCargo: [
 		0,
-		50000,
 		52500,
 		55000,
 		57500,
 		60000,
+		62500,
 	],
 
 	shipGroupIDs: {
