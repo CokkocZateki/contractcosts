@@ -14,7 +14,7 @@ var staticData = {
         25:   [2500,        'Frigate'],
         26:   [10000,       'Cruiser'],
         27:   [50000,       'Battleship'],
-        28:   [10000,       'Industrial'],
+        28:   [20000,       'Industrial'],
         30:   [13000000,    'Titan'],
         31:   [500,         'Shuttle'],
         237:  [2500,        'Rookie Ship'],
