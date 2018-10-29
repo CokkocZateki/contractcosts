@@ -1,12 +1,7 @@
-
-
-(function (exports) {
-
-
+(function(exports) {
     exports.app = new Vue({
-
         // the root element that will be compiled
-        el: '#couriercosts',
+        el: "#couriercosts",
 
         // app initial state
         data: {
@@ -15,12 +10,11 @@
             evepraisals: [],
             nonShips: {},
             ships: {},
-            newValue: '',
+            newValue: ""
         },
 
         // computed properties
         computed: {
-
             shipsRepr: function() {
                 return JSON.stringify(this.ships);
             },
@@ -34,19 +28,19 @@
              * @returns {Array} An array including all items (ship and nonship) drawn from every evepraisal.
              */
             allItems: function() {
-                var result = [];    // initialize empty result array
+                var result = []; // initialize empty result array
                 // loop over all evepraisal groups in this.nonShips
                 for (var nonShipImportTime in this.nonShips) {
                     // loop over all items in evepraisal group
                     for (var nonShip of this.nonShips[nonShipImportTime]) {
-                        result.push(nonShip);  // add item to result array
+                        result.push(nonShip); // add item to result array
                     }
                 }
                 // loop over all evepraisal groups in this.ships
                 for (var shipImportTime in this.ships) {
                     // loop over all items in evepraisal group
                     for (var ship of this.ships[shipImportTime]) {
-                        result.push(ship);  // add item to result array
+                        result.push(ship); // add item to result array
                     }
                 }
                 return result;
@@ -78,7 +72,9 @@
              * @returns {Number} Average of the total sell and total buy values.
              */
             totalEvepraisalsAvg: function() {
-                return (this.totalEvepraisalsBuy + this.totalEvepraisalsSell) / 2;
+                return (
+                    (this.totalEvepraisalsBuy + this.totalEvepraisalsSell) / 2
+                );
             },
 
             /**
@@ -99,7 +95,9 @@
              * @returns {Number} Sum of the rewards of all items, plus a base fee.
              */
             totalReward: function() {
-                return this.itemsReward(this.allItems) + this.config.reward.baseFee;
+                return (
+                    this.itemsReward(this.allItems) + this.config.reward.baseFee
+                );
             },
 
             /**
@@ -108,17 +106,29 @@
             dstSkillRequired: function() {
                 var volume = this.totalVolume;
                 if (volume < staticData.dstCargo[1]) {
-                    return 'Requires DST with Transport Ships I.';
-                } else if (this.staticData.dstCargo[1] < volume && volume < this.staticData.dstCargo[2]) {
-                    return 'Requires DST with Transport Ships II';
-                } else if (this.staticData.dstCargo[2] < volume && volume < this.staticData.dstCargo[3]) {
-                    return 'Requires DST with Transport Ships III';
-                } else if (this.staticData.dstCargo[3] < volume && volume < this.staticData.dstCargo[4]) {
-                    return 'Requires DST with Transport Ships IV';
-                } else if (this.staticData.dstCargo[4] < volume && volume < this.staticData.dstCargo[5]) {
-                    return 'Requires DST with Transport Ships V';
+                    return "Requires DST with Transport Ships I.";
+                } else if (
+                    this.staticData.dstCargo[1] < volume &&
+                    volume < this.staticData.dstCargo[2]
+                ) {
+                    return "Requires DST with Transport Ships II";
+                } else if (
+                    this.staticData.dstCargo[2] < volume &&
+                    volume < this.staticData.dstCargo[3]
+                ) {
+                    return "Requires DST with Transport Ships III";
+                } else if (
+                    this.staticData.dstCargo[3] < volume &&
+                    volume < this.staticData.dstCargo[4]
+                ) {
+                    return "Requires DST with Transport Ships IV";
+                } else if (
+                    this.staticData.dstCargo[4] < volume &&
+                    volume < this.staticData.dstCargo[5]
+                ) {
+                    return "Requires DST with Transport Ships V";
                 } else if (this.staticData.dstCargo[5] < volume) {
-                    return 'WARNING: Too large for a DST';
+                    return "WARNING: Too large for a DST";
                 } else {
                     console.log("This should not happen.");
                 }
@@ -129,12 +139,11 @@
              */
             excessVolume: function() {
                 return this.totalVolume - this.staticData.dstCargo[5];
-            },
+            }
         },
 
         // methods that implement data logic
         methods: {
-
             /**
              * Provides a way to call addValue() having to use the frontend's form
              * @param {String} value Valid Evepraisal URL
@@ -157,10 +166,10 @@
                     if (/https?:\/\/evepraisal\.com\/e\/\d+/.test(line)) {
                         this.addEvepraisal(line);
                     } else {
-                        console.log('Invalid value input.');
+                        console.log("Invalid value input.");
                     }
                 }
-                this.newValue = '';
+                this.newValue = "";
             },
 
             /**
@@ -168,60 +177,72 @@
              * @param {String} url Valid Evepraisal URL
              */
             addEvepraisal: function(url) {
-
                 /**
                  * @param {String} url Valid Evepraisal URL
                  * @param {Function} callbackFunction Function to be executed after the Evepraisal AJAX request succeeds
                  */
                 function addEvepraisalAJAX(url, callbackFunction) {
                     $.ajax({
-                        dataType: 'json',
-                        url: 'https://crossorigin.me/' + url + '.json',
+                        dataType: "json",
+                        url: `https://cors-anywhere.peterhenry.net/${url}.json`,
                         success: function(data) {
                             callbackFunction(data);
                         }
                     });
                 }
 
-                addEvepraisalAJAX(url, $.proxy(function(data) {
-                    // as long as the evepraisal was taken in the permitted market
-                    if (data.market_name === this.config.permittedMarket) {
-                        // make a local copy of the incoming evepraisal and add a timestamp to it
-                        var evepraisal = data;
-                        evepraisal.importTime = Date.now();
-                        // initialize arrays corresponding to that importTime in the this.ships and this.nonShips objects
-                        this.ships = Object.assign({}, this.ships, {[evepraisal.importTime]: []});
-                        this.nonShips = Object.assign({}, this.nonShips, {[evepraisal.importTime]: []});
-                        // for each item in the new evepraisal
-                        for (var item of evepraisal.items) {
+                addEvepraisalAJAX(
+                    url,
+                    $.proxy(function(data) {
+                        // as long as the evepraisal was taken in the permitted market
+                        if (data.market_name === this.config.permittedMarket) {
+                            // make a local copy of the incoming evepraisal and add a timestamp to it
+                            var evepraisal = data;
+                            evepraisal.importTime = Date.now();
+                            // initialize arrays corresponding to that importTime in the this.ships and this.nonShips objects
+                            this.ships = Object.assign({}, this.ships, {
+                                [evepraisal.importTime]: []
+                            });
+                            this.nonShips = Object.assign({}, this.nonShips, {
+                                [evepraisal.importTime]: []
+                            });
+                            // for each item in the new evepraisal
+                            for (var item of evepraisal.items) {
+                                // if the item is a ship
+                                if (
+                                    item.groupID in this.staticData.shipGroupIDs
+                                ) {
+                                    var ship = item; // make a local copy to assign some new properties
+                                    ship.importTime = evepraisal.importTime;
+                                    ship.evepraisalID = evepraisal.id;
+                                    ship.packagedVolume = this.staticData.shipGroupIDs[
+                                        ship.groupID
+                                    ][0];
+                                    ship.condition = "packaged";
+                                    // add the the ship object to this.ships
+                                    this.ships[evepraisal.importTime].push(
+                                        ship
+                                    );
+                                }
 
-                            // if the item is a ship
-                            if (item.groupID in this.staticData.shipGroupIDs) {
-                                var ship = item; // make a local copy to assign some new properties
-                                ship.importTime = evepraisal.importTime;
-                                ship.evepraisalID = evepraisal.id;
-                                ship.packagedVolume = this.staticData.shipGroupIDs[ship.groupID][0];
-                                ship.condition = 'packaged';
-                                // add the the ship object to this.ships
-                                this.ships[evepraisal.importTime].push(ship);
+                                // if the item is not a ship
+                                else {
+                                    var nonShip = item; // make a local copy to assign some new properties
+                                    nonShip.importTime = evepraisal.importTime;
+                                    nonShip.evepraisalID = evepraisal.id;
+                                    nonShip.mutableVolume = NaN;
+                                    nonShip.condition = "unpackaged";
+                                    // add the nonShip object to this.nonShips
+                                    this.nonShips[evepraisal.importTime].push(
+                                        nonShip
+                                    );
+                                }
                             }
-
-                            // if the item is not a ship
-                            else {
-                                var nonShip = item; // make a local copy to assign some new properties
-                                nonShip.importTime = evepraisal.importTime;
-                                nonShip.evepraisalID = evepraisal.id;
-                                nonShip.mutableVolume = NaN;
-                                nonShip.condition = 'unpackaged';
-                                // add the nonShip object to this.nonShips
-                                this.nonShips[evepraisal.importTime].push(nonShip);
-                            }
+                            // add the modified evepraisal to this.evepraisals
+                            this.evepraisals.push(evepraisal);
                         }
-                        // add the modified evepraisal to this.evepraisals
-                        this.evepraisals.push(evepraisal);
-                    }
-                }, this));
-
+                    }, this)
+                );
             },
 
             /**
@@ -240,7 +261,9 @@
                     // if the loop timestamp doesn't match the timestamp of the passed evepraisal
                     if (shipImportTime !== evepraisal.importTime) {
                         // stick the loop timestamp's object into the local object to keep
-                        remainingShips[shipImportTime] = this.ships[shipImportTime];
+                        remainingShips[shipImportTime] = this.ships[
+                            shipImportTime
+                        ];
                     }
                 }
                 // loop through the timestamp keys in this.nonShip
@@ -249,7 +272,9 @@
                     // if the loop timestamp doesn't match the timestamp of the passed evepraisal
                     if (nonShipImportTime !== evepraisal.importTime) {
                         // stick the loop timestamp's object into the local object to keep
-                        remainingNonShips[nonShipImportTime] = this.nonShips[nonShipImportTime];
+                        remainingNonShips[nonShipImportTime] = this.nonShips[
+                            nonShipImportTime
+                        ];
                     }
                 }
 
@@ -272,21 +297,20 @@
             itemCollateral: function(item) {
                 // if the item has prices (handles Evepraisal's stubs from parsing errors)
                 if (item.prices) {
-
                     // save basic properties as local variables
                     var buy = parseFloat(item.prices.buy.min);
                     var sell = parseFloat(item.prices.sell.min);
                     var qty = parseFloat(item.quantity);
 
                     // calculate the collateral based on the settings in the config file
-                    if (this.config.collateral === 'buy') {
+                    if (this.config.collateral === "buy") {
                         return buy * qty;
-                    } else if (this.config.collateral === 'sell') {
+                    } else if (this.config.collateral === "sell") {
                         return sell * qty;
-                    } else if (this.config.collateral === 'avg') {
+                    } else if (this.config.collateral === "avg") {
                         return ((buy + sell) / 2.0) * qty;
                     } else {
-                        console.log('config.collateral contains a bad value');
+                        console.log("config.collateral contains a bad value");
                     }
                 }
 
@@ -317,14 +341,15 @@
              * @returns {Float} Volume of the item, based on its condition (packaged/unpackaged)
              */
             itemVolume: function(item) {
-                if (item.condition === 'packaged') {
+                if (item.condition === "packaged") {
                     return (item.packagedVolume || 0) * item.quantity;
-                }
-                else if (item.condition === 'unpackaged') {
+                } else if (item.condition === "unpackaged") {
                     return (item.volume || 0) * item.quantity;
-                }
-                else {
-                    console.log('bad item.condition found: ' + JSON.stringify(item.condition));
+                } else {
+                    console.log(
+                        "bad item.condition found: " +
+                            JSON.stringify(item.condition)
+                    );
                     return 0;
                 }
             },
@@ -347,8 +372,13 @@
              * @return {Float} Reward needed for the item, based on its collateral and volume
              */
             itemReward: function(item) {
-                var volumeComponent = this.itemVolume(item) * (this.config.reward.fullDstPrice / this.staticData.dstCargo[5]);
-                var collateralComponent = this.itemCollateral(item) * this.config.reward.percentOfCollateral;
+                var volumeComponent =
+                    this.itemVolume(item) *
+                    (this.config.reward.fullDstPrice /
+                        this.staticData.dstCargo[5]);
+                var collateralComponent =
+                    this.itemCollateral(item) *
+                    this.config.reward.percentOfCollateral;
                 return volumeComponent + collateralComponent;
             },
 
@@ -363,11 +393,7 @@
                 }
                 var totalReward = rewards.reduce((a, b) => a + b);
                 return totalReward || 0;
-            },
-
-        },
-
-
+            }
+        }
     }); // end of app definition
-
 })(window);
