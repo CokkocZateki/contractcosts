@@ -184,7 +184,7 @@
                 function addEvepraisalAJAX(url, callbackFunction) {
                     $.ajax({
                         dataType: "json",
-                        url: "https://crossorigin.me/" + url + ".json",
+                        url: `https://cors-anywhere.peterhenry.net/${url}.json`,
                         success: function(data) {
                             callbackFunction(data);
                         }
