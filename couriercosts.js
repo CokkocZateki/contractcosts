@@ -163,10 +163,12 @@
                 }
                 var lines = value.split(/\r\n|\r|\n/g);
                 for (var line of lines) {
-                    if (/https?:\/\/evepraisal\.com\/e\/\d+/.test(line)) {
+                    if (/https?:\/\/evepraisal\.com\/a\/[a-z0-9]+/.test(line)) {
                         this.addEvepraisal(line);
                     } else {
-                        console.log("Invalid value input.");
+                        console.log(
+                            "Input not recognized as an Evepraisal URL."
+                        );
                     }
                 }
                 this.newValue = "";
