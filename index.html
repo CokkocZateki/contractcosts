@@ -131,7 +131,6 @@
               <tr>
                 <th>Link</th>
                 <th>Type</th>
-                <th>Condition</th>
                 <th class="isk-header">Volume</th>
                 <th class="isk-header">Collateral (Jita Sell)</th>
                 <th class="isk-header">Reward</th>
@@ -154,7 +153,6 @@
               <tr v-if="nonShips[evepraisal.importTime].length">
                 <td>&#8627;</td>
                 <td>{{ nonShips[evepraisal.importTime].length }} Non-Ship Items</td>
-                <td></td>
                 <td class="isk">{{ itemsVolume(nonShips[evepraisal.importTime]) | currency '' 2 }} m<sup>3</sup></td>
                 <td class="isk">{{ itemsCollateral(nonShips[evepraisal.importTime]) | currency '' 2 }}</td>
                 <td class="isk">{{ itemsReward(nonShips[evepraisal.importTime]) | currency '' 2 }}</td>
@@ -164,13 +162,6 @@
               <tr v-for="ship of ships[evepraisal.importTime]">
                 <td>&#8627;</td>
                 <td>{{ ship.name }}</td>
-                <td>
-                  <label for="packaged">Packed</label>
-                  <input class="iradio" type="radio" id="packaged" value="packaged" v-model="ships[evepraisal.importTime][$index].condition"
-                    checked>
-                  <input class="iradio" type="radio" id="unpackaged" value="unpackaged" v-model="ships[evepraisal.importTime][$index].condition">
-                  <label for="unpackaged">Unpacked</label>
-                </td>
                 <td class="isk">{{ itemVolume(ship) | currency '' 2 }} m<sup>3</sup></td>
                 <td class="isk">{{ itemCollateral(ship) | currency '' 2 }}</td>
                 <td class="isk">{{ itemReward(ship) | currency '' 2 }}</td>
@@ -182,8 +173,7 @@
               <tr>
                 <th>Totals:</th>
                 <th></th>
-                <th></th>
-                <th class="isk">{{ totalVolume | currency '' 2 }}</th>
+                <th class="isk">{{ totalVolume | currency '' 2 }} m<sup>3</sup></th>
                 <th class="isk">{{ totalCollateral | currency '' 2 }}</th>
                 <th class="isk">{{ totalReward | currency '' 2 }}</th>
                 <th></th>
