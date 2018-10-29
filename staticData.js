@@ -42,5 +42,48 @@ var staticData = {
         1202: [10000, "Blockade Runner"],
         1283: [2500, "Expedition Frigate"],
         1305: [5000, "Tactical Destroyer"]
+    },
+
+    shipPackagedMasses: {
+        10000: [
+            "Blockade Runner",
+            "Combat Recon Ship",
+            "Cruiser",
+            "Deep Space Transport",
+            "Force Recon Ship",
+            "Heavy Assault Cruiser",
+            "Heavy Interdiction Cruiser",
+            "Logistics"
+        ],
+        1300000: [
+            "Capital Industrial Ship",
+            "Carrier",
+            "Dreadnought",
+            "Freighter",
+            "Jump Freighter"
+        ],
+        13000000: ["Supercarrier", "Titan"],
+        15000: ["Attack Battlecruiser", "Combat Battlecruiser", "Command Ship"],
+        20000: ["Industrial"],
+        2500: [
+            "Assault Frigate",
+            "Covert Ops",
+            "Electronic Attack Ship",
+            "Expedition Frigate",
+            "Frigate",
+            "Interceptor",
+            "Rookie Ship",
+            "Stealth Bomber"
+        ],
+        3750: ["Exhumer", "Mining Barge"],
+        500: ["Prototype Exploration Ship", "Shuttle"],
+        5000: [
+            "Destroyer",
+            "Interdictor",
+            "Strategic Cruiser",
+            "Tactical Destroyer"
+        ],
+        50000: ["Battleship", "Black Ops", "Marauder"],
+        500000: ["Industrial Command Ship"]
     }
 };
