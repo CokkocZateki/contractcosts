@@ -2,17 +2,15 @@
 // constants of the app.  Change or add to them as desired.
 
 var config = {
-
     // only evepraisals taken from the specified market will be accepted.
     // Possible values: 'Jita', 'Amarr', 'Dodixie', 'Rens', 'Hek', 'Universe'
-    permittedMarket: 'Jita',
+    permittedMarket: "Jita",
 
     // set to any of these three values: 'buy', 'sell', 'avg'
-    collateral: 'sell',
+    collateral: "sell",
 
     // settings having to do with reward balancing
     reward: {
-
         // base contract fee
         baseFee: 3000000,
 
@@ -20,6 +18,6 @@ var config = {
         fullDstPrice: 20000000,
 
         // Percent of the collateral contributed to the reward
-        percentOfCollateral: 0.01,
-    },
+        percentOfCollateral: 0.01
+    }
 };
