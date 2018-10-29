@@ -163,10 +163,12 @@
                 }
                 var lines = value.split(/\r\n|\r|\n/g);
                 for (var line of lines) {
-                    if (/https?:\/\/evepraisal\.com\/e\/\d+/.test(line)) {
+                    if (/https?:\/\/evepraisal\.com\/a\/[a-z0-9]+/.test(line)) {
                         this.addEvepraisal(line);
                     } else {
-                        console.log("Invalid value input.");
+                        console.log(
+                            "Input not recognized as an Evepraisal URL."
+                        );
                     }
                 }
                 this.newValue = "";
@@ -210,15 +212,12 @@
                             for (var item of evepraisal.items) {
                                 // if the item is a ship
                                 if (
-                                    item.groupID in this.staticData.shipGroupIDs
+                                    item.typeVolume in
+                                    this.staticData.shipPackagedMasses
                                 ) {
                                     var ship = item; // make a local copy to assign some new properties
                                     ship.importTime = evepraisal.importTime;
                                     ship.evepraisalID = evepraisal.id;
-                                    ship.packagedVolume = this.staticData.shipGroupIDs[
-                                        ship.groupID
-                                    ][0];
-                                    ship.condition = "packaged";
                                     // add the the ship object to this.ships
                                     this.ships[evepraisal.importTime].push(
                                         ship
@@ -230,8 +229,6 @@
                                     var nonShip = item; // make a local copy to assign some new properties
                                     nonShip.importTime = evepraisal.importTime;
                                     nonShip.evepraisalID = evepraisal.id;
-                                    nonShip.mutableVolume = NaN;
-                                    nonShip.condition = "unpackaged";
                                     // add the nonShip object to this.nonShips
                                     this.nonShips[evepraisal.importTime].push(
                                         nonShip
@@ -335,23 +332,12 @@
 
             /**
              * @param {Object} item
-             * @param {String} item.condition
-             * @param {Float} item.packagedVolume
-             * @param {Float} item.volume
-             * @returns {Float} Volume of the item, based on its condition (packaged/unpackaged)
+             * @param {Float} item.quantity Number of items in this item line
+             * @param {Float} item.typeVolume Volume of a single item
+             * @returns {Float} Volume of this item line
              */
             itemVolume: function(item) {
-                if (item.condition === "packaged") {
-                    return (item.packagedVolume || 0) * item.quantity;
-                } else if (item.condition === "unpackaged") {
-                    return (item.volume || 0) * item.quantity;
-                } else {
-                    console.log(
-                        "bad item.condition found: " +
-                            JSON.stringify(item.condition)
-                    );
-                    return 0;
-                }
+                return (item.typeVolume || 0) * item.quantity;
             },
 
             /**
