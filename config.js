@@ -3,8 +3,8 @@
 
 var config = {
     // only evepraisals taken from the specified market will be accepted.
-    // Possible values: 'Jita', 'Amarr', 'Dodixie', 'Rens', 'Hek', 'Universe'
-    permittedMarket: "Jita",
+    // Possible values: 'jita', 'amarr', 'dodixie', 'rens', 'hek', 'universe'
+    permittedMarket: "jita",
 
     // set to any of these three values: 'buy', 'sell', 'avg'
     collateral: "sell",
